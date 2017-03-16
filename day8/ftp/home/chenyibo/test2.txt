@@ -1,0 +1,147 @@
+Zabbix 3.0安装步骤
+
+1.环境准备
+Centos 6.X
+2.数据库准备
+默认centos yum源中mysql包的版本号为5.1，为了能使zabbix 3.0能达到最好的性能效果，安装最新版的mysql数据库。
+
+yum list installed | grep mysql     查看yum源的mysql版本号
+yum remove mysql*             移除yum源mysql包
+rpm -ivh http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm    加载最新版的mysql包
+yum install mysql-server         安装mysql数据库
+
+Installing:
+ mysql-community-server  x86_64   5.6.26-2.el6  mysql56-community      53 M   安装结果如上显示，确保安装的数据库版本为5.6
+
+vi /etc/my.cnf      修改数据库文件
+
+[mysqld]
+innodb_file_per_table        在【mysql】下加入innodb_file_per_table
+
+service mysqld start          启动mysql数据库
+
+mysql_secure_installation       mysql安全配置
+
+Enter current password for root (enter for none):    输入进入数据库密码，默认为空，按回车
+
+Set root password? [Y/n]                        设置mysql数据库root用户的密码
+
+Remove anonymous users? [Y/n]                 移除匿名用户Y
+
+Disallow root login remotely? [Y/n]                不允许root用户远程登陆Y
+
+Remove test database and access to it? [Y/n]        移除test数据库和访问Y
+
+Reload privilege tables now? [Y/n]                 重载权限表Y
+
+登入mysql数据库    mysql –u root –p 上个步骤设置的root密码
+
+CREATE DATABASE zabbix CHARACTER SET utf8 COLLATE utf8_bin;   创建zabbix数据库，字符集设置为utf8
+
+GRANT ALL PRIVILEGES ON zabbix.* TO zabbix@localhost IDENTIFIED BY 'zabbix用户的密码';             赋予zabbix用户对zabbix数据库的全部权限，同时在mysql数据库中创建zabbix用户
+
+show database;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| zabbix             |
++--------------------+
+4 rows in set (0.00 sec)
+exit  退出mysql数据库
+
+3.服务器准备
+zabbix 3.0要求的php版本必须为5.4及以上版本
+rpm -ivh http://repo.webtatic.com/yum/el6/latest.rpm    
+
+yum install httpd php56w php56w-gd php56w-mysql php56w-bcmath php56w-mbstring php56w-xml php56w-ldap     安装所需要的zabbix 3.0的server环境
+
+修改php配置文件   vi /etc/php.ini
+
+post_max_size=16M
+max_execution_time=300
+max_input_time=300
+date.timezone=Asia /Shanghai
+always_populate_raw_post_data=-1
+
+service httpd start 开启apache服务器
+
+添加防火墙规则，允许80端口通过防火墙
+iptables -I INPUT -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables-save > /etc/sysconfig/iptables   保存防火墙规则
+
+在浏览器中输入服务器的ip，能够看见apache的测试页面，说明apache服务器已经正常工作。
+
+4.安装zabbix监控系统
+添加zabbix监控系统的zabbix用户和用户组
+
+groupadd zabbix
+useradd –g zabbix –s /sbin/nologin zabbix
+
+创建zabbix用户的主目录下downloads目录
+mkdir /home/zabbix/downloads
+cd /home/zabbix/downloads
+
+下载wget下载器
+yum install –y wget
+
+下载zabbix安装包
+wget "http://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Development/3.0.0beta1/zabbix-3.0.0beta1.tar.gz"
+
+解压zabbix安装包
+tar -zxvf zabbix-3.0.0beta1.tar.gz
+
+导入zabbix的数据库文件
+cd /home/zabbix/downloads/zabbix-3.0.0beta1/database/mysql
+下面导入顺序不可乱，否则会出错
+mysql -u zabbix -p zabbix < schema.sql
+mysql -u zabbix -p zabbix < images.sql
+mysql -u zabbix -p zabbix < data.sql
+安装zabbix编译编译环境
+yum install gcc mysql-community-devel libxml2-devel  unixODBC-devel net-snmp-devel libcurl-devel libssh2-devel OpenIPMI-devel openssl-devel openldap-devel
+编译安装zabbix
+cd /home/zabbix/downloads/zabbix-3.0.0beta1/
+./configure --enable-server --enable-agent --with-mysql --enable-ipv6 --with-net-snmp --with-libcurl --with-libxml2 --with-unixodbc --with-ssh2 --with-openipmi --with-openssl
+
+
+make install
+
+修改zabbix配置文件
+vi /usr/local/etc/zabbix_server.conf
+
+DBName=zabbix               数据库名
+DBUser=zabbix                数据库用户
+DBPassword=your_password     输入mysql数据库用户zabbix的密码 
+
+5.zabbix web部署
+mkdir /var/www/html/zabbix    创建apache下zabbix目录
+cp –a /home/zabbix/downloads/zabbix-3.0.0beta1/frontends/php/ /var/www/html/zabbix/     拷贝zabbixbao中的web界面到apache zabbix目录下
+6.关闭selinux
+setenforce 0
+
+vi /etc/selinux/config
+
+SELINUX=enforcing 改为 SELINUX=disable
+
+配置web安全
+chown –R apache.apache /var/www/html/zabbix
+chmod +x /var/www/html/zabbix/conf
+7.服务启动配置
+拷贝zabbix包中服务启动脚本到linux系统服务启动目录
+cp /home/zabbix/downloads/zabbix-3.0.0beta1/misc/init.d/fedora/core/zabbix_server /etc/init.d/zabbix_server
+
+cp /home/zabbix/downloads/zabbix-3.0.0beta1/misc/init.d/fedora/core/zabbix_agentd /etc/init.d/zabbix_agentd
+添加zabbix server和zabbix agent 作为服务
+
+chkconfig --add /etc/init.d/zabbix_server
+chkconfig --add /etc/init.d/zabbix_agentd
+启动服务为开启自启
+chkconfig httpd on
+chkconfig mysqld on
+chkconfig zabbix_server on
+chkconfig zabbix_agentd on
+启动服务
+service zabbix_server start
+service zabbix_agentd start   zabbix本身也监测自己

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form class="login" action="/login/" method="POST">
+{#        form表单的csrf提交#}
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="用户名"/>
+        <input type="password" name="pwd" placeholder="密码"/>
+        <input type="checkbox" name="rmb" value="1"/> 5秒免登陆
+        <input type="submit" value="提交" />
+        <input id="btn" type="button" value="按钮"/>
+    </form>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script src="/static/jquery.cookie.js"></script>
+    <script>
+        $(function () {
+{#            全局配置ajax的csrf提交#}
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    xhr.setRequestHeader('X-CSRFtoken', $.cookie('csrftoken'));
+                }
+            });
+
+            $('#btn').click(function () {
+                $.ajax({
+                    url:'/login/',
+                    type:'POST',
+                    data:$('.login').form.serialize(),
+                    success:function (arg) {}
+                })
+            });
+        })
+    </script>
+</body>
+</html>

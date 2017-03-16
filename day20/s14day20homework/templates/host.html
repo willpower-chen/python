@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>主机一对多表三种方式获取</title>
+    <style>
+        .hide{
+            display: none;
+        }
+        .shade{
+            position: fixed;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0.6;
+            z-index: 100;
+        }
+        .add-modal,.edit-modal{
+            position: fixed;
+            border:1px solid red;
+            background-color: white;
+            top:50%;
+            left: 50%;
+            height: 300px;
+            width: 400px;
+            margin-top: -150px;
+            margin-left: -200px;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <h1>主机(对象)</h1>
+    <div>
+        <input id='add_host' type="button" value="添加"/>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>主机名</th>
+                <th>ip</th>
+                <th>端口</th>
+                <th>业务线名</th>
+                <th>操作</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in v1 %}
+                <tr  hid="{{ row.id }}" bid="{{ row.b_id }}" hostname="{{ row.hostname }}" ip="{{ row.ip }}" port="{{ row.port }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ row.hostname }}</td>
+                    <td>{{ row.ip }}</td>
+                    <td>{{ row.port }}</td>
+                    <td>{{ row.b.caption }}</td>
+                    <td>
+                        <input class="edit" type="button" value="编辑"/>
+                    </td>
+                    <td>
+                        <input class='delete' type="button" value="删除"/>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h1>主机(字典)</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>序列</th>
+                <th>主机名</th>
+                <th>ip</th>
+                <th>端口</th>
+                <th>业务线名</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in v2 %}
+                <tr hid="{{ row.id }}" bid="{{ row.b_id }}">
+                    <td>{{ forloop.counter0 }}</td>
+                    <td>{{ row.hostname }}</td>
+                    <td>{{ row.ip }}</td>
+                    <td>{{ row.port }}</td>
+                    <td>{{ row.b__caption }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>主机(元组)</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>序列</th>
+                <th>主机名</th>
+                <th>ip</th>
+                <th>端口</th>
+                <th>业务线名</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in v3 %}
+                <tr hid="{{ row.0 }}" bid="{{ row.4 }}">
+                    <td>{{ forloop.revcounter }}</td>
+                    <td>{{ row.1 }}</td>
+                    <td>{{ row.2 }}</td>
+                    <td>{{ row.3 }}</td>
+                    <td>{{ row.5 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="shade hide"></div>
+    <div class="add-modal hide">
+    <form id="add_form" method="POST" action="/host/" >
+        <input   type="text" name="id" style="display: none"/>
+        <input id="hostname" type="text" placeholder="主机名" name="hostname"/>
+        <input id="ip" type="text" placeholder="IP" name="ip"/>
+        <input id="port" type="text" placeholder="端口" name="port"/>
+        <select id="sel" name="b_id">
+            {% for op in b_list %}
+                <option value="{{ op.id }}">{{ op.caption }}</option>
+            {% endfor %}
+        </select>
+        <div>
+            <input type="submit" value="提交">
+            <input id="ajax_submit" type="button" value="ajax的提交(不刷新页面，直接跟后台数据交互)"/>
+            <input id="cancel" type="button" value="取消">
+            <span id="error_msg" style="color: red"></span>
+        </div>
+    </form>
+    </div>
+    <div class="edit-modal hide">
+    <form id="edit_form" method="POST" action="/host/" >
+        <input   type="text" name="id" style="display:none"/>
+        <input id="hostname" type="text" placeholder="主机名" name="hostname"/>
+        <input id="ip" type="text" placeholder="IP" name="ip"/>
+        <input id="port" type="text" placeholder="端口" name="port"/>
+        <select id="sel" name="b_id">
+            {% for op in b_list %}
+                <option value="{{ op.id }}">{{ op.caption }}</option>
+            {% endfor %}
+        </select>
+        <div>
+            <input id="ajax_submit_edit" type="button" value="确认编辑"/>
+            <span id="error_msg_2" style="color: red"></span>
+        </div>
+    </form>
+    </div>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script>
+        $(function () {
+            $('#add_host').click(function () {
+                $('.shade,.add-modal').removeClass('hide');
+            });
+            $('#cancel').click(function () {
+                $('.shade,.add-modal').addClass('hide');
+            });
+            $('#ajax_submit').click(function () {
+                $.ajax({
+                   url:'/test_ajax',
+                   type:'POST',
+{#                   data:{'hostname':$('#hostname').val(),'ip':$('#ip').val(),'port':$('#port').val(),'b_id':$('#sel').val(),},#}
+                    //下面一句是上面一句的简写
+                   data:$('#add_form').serialize(),
+                   success:function (data) {
+                       //后端服务器返回的字符串转化为对象
+                        var obj = JSON.parse(data);
+                       //如果对象中状态为True这刷新页面location.reload()，否则返回错误信息obj.error
+                       if(obj.status){
+                            location.reload()
+                       }else{
+                           $('#error_msg').text(obj.error)
+                       }
+                   }
+               });
+            });
+            $('.edit').click(function () {
+                $('.shade,.edit-modal').removeClass('hide');
+                var bid = $(this).parent().parent().attr('bid');
+                var hid = $(this).parent().parent().attr('hid');
+                var hostname = $(this).parent().parent().attr('hostname');
+                var ip = $(this).parent().parent().attr('ip');
+                var port = $(this).parent().parent().attr('port');
+                $('#edit_form').find('select').val(bid);
+                $('#edit_form').find('input[name="id"]').val(hid);
+                $('#edit_form').find('input[name="hostname"]').val(hostname);
+                $('#edit_form').find('input[name="ip"]').val(ip);
+                $('#edit_form').find('input[name="port"]').val(port);
+                $('#ajax_submit_edit').click(function () {
+                    $.ajax({
+                        url:'/ajax_submit_edit',
+                        type:'POST',
+                        data:$('#edit_form').serialize(),
+                        success:function (data) {
+                            //后端服务器返回的字符串转化为对象
+                            var obj = JSON.parse(data);
+                            //如果对象中状态为True这刷新页面location.reload()，否则返回错误信息obj.error
+                            if (obj.status) {
+                                location.reload()
+                            } else {
+                                $('#error_msg_2').text(obj.error)
+                            }
+                        }
+                    })
+                });
+
+            });
+            $('.delete').click(function () {
+                $.ajax({
+                    url:'/test_delete',
+                    type:'POST',
+                    data:{'hid': $(this).parent().parent().attr('hid')},
+                    success:function (data) {
+                        location.reload();
+{#                        $('#delete_msg').sibling().remove();#}
+{#                        $(this).parent().parent().innerText('删除成功')#}
+                    }
+                })
+            });
+        });
+    </script>
+
+</body>
+</html>

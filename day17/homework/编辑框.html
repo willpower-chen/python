@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .head{
+            height: 100px;
+            line-height: 100px;
+        }
+        .choose{
+            height: 30px;
+            line-height: 30px;
+            width: 50px;
+            padding: 5px;
+        }
+        .edit{
+            height: 40px;
+            line-height: 40px;
+            width: 100px;
+            background-color: #f89406;
+            display: inline-block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <input class="choose ag" type="button" value="全选"/>
+        <input class="choose rg" type="button" value="反选"/>
+        <input class="choose cg" type="button" value="取消"/>
+        <a class="edit">进入编辑模式</a>
+    </div>
+    <div class="body">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>选择</th>
+                    <th>主机名</th>
+                    <th>端口</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody id="tb">
+                <tr>
+                     <td>
+                        <input type="checkbox"/>
+                    </td>
+                    <td target="hostname">
+                        <input type="text" value="192.168.66.1"/>
+                    </td>
+                    <td target="port">
+                        <input type="text" value="8088"/>
+                    </td>
+                    <td  target="status">
+                        <select name="status">
+                            <option value="1">在线</option>
+                            <option value="2">下线</option>
+                        </select>
+                    </td>
+               </tr>
+                <tr>
+                     <td>
+                        <input type="checkbox"/>
+                    </td>
+                    <td target="hostname">
+                        <input type="text" value="192.168.66.1"/>
+                    </td>
+                    <td target="port">
+                        <input type="text" value="8088"/>
+                    </td>
+                    <td  target="status">
+                        <select name="status">
+                            <option value="1">在线</option>
+                            <option value="2">下线</option>
+                        </select>
+                    </td>
+               </tr>
+                <tr>
+                     <td>
+                        <input type="checkbox"/>
+                    </td>
+                    <td target="hostname">
+                        <input type="text" value="192.168.66.1"/>
+                    </td>
+                    <td target="port">
+                        <input type="text" value="8088"/>
+                    </td>
+                    <td  target="status">
+                        <select name="status">
+                            <option value="1">在线</option>
+                            <option value="2">下线</option>
+                        </select>
+                    </td>
+               </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="jquery-1.12.4.js"></script>
+    <script>
+        //全选
+        $('.ag').click(function () {
+            $('#tb :checkbox').prop('checked',true)
+        });
+        //取消
+        $('.cg').click(function () {
+            $('#tb :checkbox').prop('checked',false)
+        });
+        //反选
+        $('.rg').click(function () {
+            $('#tb :checkbox').each(function () {
+                var v = $(this).prop('checked')?false:true;
+                $(this).prop('checked',v)
+            })
+        });
+
+    </script>
+</body>
+</html>

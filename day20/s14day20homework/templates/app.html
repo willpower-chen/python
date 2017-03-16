@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>应用列表</title>
+    <style>
+        .host_status{
+            background-color: aqua;
+            padding: 5px;
+            display: inline-block;
+
+        }
+        .hide{
+            display: none;
+        }
+        .shade{
+            position: fixed;
+            top:0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            opacity: 0.6;
+            z-index: 100;
+        }
+        .add-modal,.edit-modal{
+            position: fixed;
+            border:1px solid red;
+            background-color: white;
+            top:50%;
+            left: 50%;
+            height: 300px;
+            width: 400px;
+            margin-top: -150px;
+            margin-left: -200px;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <h1>应用列表</h1>
+    <div>
+        <input id='add_app' type="button" value="添加"/>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>应用名</th>
+                <th>主机名</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in app_list %}
+                <tr>
+                    <td>{{ app.name }}</td>
+                    <td>
+                    {% for host in app.r.all %}
+                        <span class="host_status">{{ host.hostname }}</span>
+                    {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="shade hide"></div>
+    <div class="add-modal hide">
+        <form id="add_form" method="POST" action="/app" >
+            <input  type="text" name="id" style="display: none"/>
+            <div>
+                <input id="app_name" type="text" placeholder="应用名" name="app_name"/>
+            </div>
+            <select id="host_list" name="host_list" multiple>
+                {% for host in host_list %}
+                    <option value="{{ host.id }}">{{ host.hostname }}</option>
+                {% endfor %}
+            </select>
+            <div>
+                <input  type="submit" value="form表单提交"/>
+                <input id="app_ajax_submit" type="button" value="ajax提交"/>
+                <input id="cancel" type="button" value="取消"/>
+                <span id="error_msg" style="color: red"></span>
+            </div>
+        </form>
+    </div>
+    <div class="edit-modal hide">
+    <form id="edit_form" method="POST" action="/app" >
+        <input   type="text" name="id" style="display:none"/>
+        <input id="app_name" type="text" placeholder="主机名" name="app_name"/>
+        <select id="sel" name="b_id">
+            {% for op in b_list %}
+                <option value="{{ op.id }}">{{ op.caption }}</option>
+            {% endfor %}
+        </select>
+        <div>
+            <input id="ajax_submit_edit" type="button" value="确认编辑"/>
+            <span id="error_msg_2" style="color: red"></span>
+        </div>
+    </form>
+    </div>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script>
+        $(function () {
+            $('#add_app').click(function () {
+                $('.shade,.add-modal').removeClass('hide');
+            });
+            $('#cancel').click(function () {
+                $('.shade,.add-modal').addClass('hide');
+            });
+            $('#app_ajax_submit').click(function () {
+                $.ajax({
+                    url:'/app_ajax_add',
+                    type:'POST',
+                    data: $('#add_form').serialize(),
+                    dataType:'JSON',
+                    traditional:true,
+                    success:function (obj) {
+                        if(obj.status){
+                            location.reload()
+                        }else{
+                           $('#error_msg').text(obj.error)
+                        }
+                    },
+                    error:function () {
+                        alert('后台无响应')
+                    }
+                })
+            })
+        });
+    </script>
+</body>
+</html>

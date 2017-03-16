@@ -1,0 +1,16 @@
+
+{% for row in data %}
+    <tr  hid="{{ row.id }}" bid="{{ row.b_id }}" hostname="{{ row.hostname }}" ip="{{ row.ip }}" port="{{ row.port }}">
+        <td>{{ forloop.counter }}</td>
+        <td>{{ row.hostname }}</td>
+        <td>{{ row.ip }}</td>
+        <td>{{ row.port }}</td>
+        <td>{{ row.b.caption }}</td>
+        <td>
+            <input class="edit" type="button" value="编辑"/>
+        </td>
+        <td>
+            <input class="delete" type="button" value="删除"/>
+        </td>
+    </tr>
+{% endfor %}

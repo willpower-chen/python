@@ -1,0 +1,143 @@
+body{
+    /* body 标签样式*/
+    font: 12px/150% Arial,Verdana,"\5b8b\4f53";
+    /*
+        按顺序设置如下属性：
+        font-style 大小等
+        font-variant
+        font-weight 宽度
+        font-size/line-height 字体大小
+        font-family 字体 \5b8b\4f53 表示宋体
+    */
+    height: 5000px;
+    margin: 0; /* 去掉外边距 */
+    color: #666;  /* 字体颜色 灰色*/
+    background: #fff; /* 背景颜色 #fff 表示白色 */
+}
+
+.main{
+    position: fixed;
+    left:0;
+    right: 0;
+    top:0;
+    background-color: #DDDDDD;
+}
+.top{
+    width: 980px;
+    margin: auto;
+}
+.top_left{
+    /* 上方左侧 */
+    float:left;
+    height: 30px;
+    margin-right: 10px;
+    text-align: -webkit-match-parent; /* 对其方式继承父容器 */
+    padding: 7px 5px 0px 15px;  /* 内边距 顺序依次为上右下左 ，也就是顺时针*/
+}
+.top_right{
+    /* 顶部右边 */
+    float: right; /* 向右浮动 */
+    height: 30px;
+    margin-right: 10px;
+    text-align: -webkit-match-parent;
+    padding: 7px 5px 0px 0px;
+}
+
+.pg-top{
+    width: 980px;
+    margin: 40px auto;
+    background-color: white;
+}
+
+.pg-top-img{
+    float: left;
+    width: 220px;
+    height: 80px;
+}
+.both{
+        clear: both;
+}
+
+
+
+
+.pg-body{
+    width: 980px;
+    height: 420px;
+    border: 1px solid #dddddd;
+    margin: auto;
+    position: relative;
+}
+
+.pg-body .right-bottom{
+        border: 1px solid #dddddd;
+        background-color: #1ba157;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        display: inline-block;
+        text-align: center;
+        height: 35px;
+        width: 100px;
+        line-height: 35px;
+        color: white;"
+}
+
+.pg-body .item-1{
+    position: relative;float: right;width: 39%;height: 320px;
+}
+
+.pg-body .item-1-a{
+    display: inline-block;
+    width: 100px;
+    height: 50px;
+    margin: 50px 20px;
+}
+
+.pg-body .item-2{
+    float: left;width: 60%;height: 320px;border-right: 1px dotted;
+}
+.item-2-a{
+    font-weight: bolder;line-height:50px;text-align:center;font-size: x-large;height: 50px;width: 150px;display: inline-block;float: left
+}
+
+
+.pg-body .menu{
+    width: 588px;height: 320px;position: relative;
+}
+
+.menu .master{
+    height: 236px;width: 288px;position: absolute;top: 50%;left: 50%;margin-top: -118px;margin-left: -144px;
+}
+
+.menu .slave-1{
+    margin-top:10px;float:right;height: 35px;width: 200px;position: relative;
+}
+
+.menu .inp{
+     height: 35px;width: 170px;padding-right: 30px;
+}
+
+.menu .sp{
+    position: absolute;
+    right: 6px;
+    top: 10px;
+    height: 16px;
+    width: 16px;
+    display: inline-block;"
+}
+
+.menu .slave-2{
+     display: inline-block;margin-top:10px;float: right;height: 35px;
+}
+
+.menu .slave-a{
+     color: red;line-height: 35px;
+}
+
+.pg-bottom{
+    width: 980px;
+    margin: 20px auto;
+    background-color: white;
+    text-align: center;
+    }

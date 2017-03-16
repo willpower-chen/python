@@ -1,0 +1,91 @@
+    .top{
+        width: 980px;
+        margin: 0 auto;
+        background-color: white;
+    }
+
+    .top-img{
+        float: left;
+        width: 220px;
+        height: 80px;
+    }
+
+    .both{
+        clear: both;
+    }
+
+    .pg-body{
+        width: 980px;
+        height: 320px;
+        border: 1px solid #dddddd;
+        margin: auto;
+        position: relative;
+    }
+
+    .pg-body .right-bottom{
+            border: 1px solid #dddddd;
+            background-color: #1ba157;
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            display: inline-block;
+            text-align: center;
+            height: 35px;
+            width: 100px;
+            line-height: 35px;
+            color: white;"
+    }
+
+    .pg-body .item-1{
+        position: relative;float: left;width: 40%;height: 320px;
+    }
+
+    .pg-body .item-1-a{
+        display: inline-block;position: absolute;top: 50%;left: 50%;margin-top: -118px;margin-left: -144px;
+    }
+
+    .pg-body .item-2{
+        float: left;width: 60%;height: 320px;
+    }
+
+    .pg-body .menu{
+        width: 588px;height: 320px;position: relative;
+    }
+
+    .menu .master{
+        height: 236px;width: 288px;position: absolute;top: 50%;left: 50%;margin-top: -118px;margin-left: -144px;
+    }
+
+    .menu .slave-1{
+        margin-top:10px;float:right;height: 35px;width: 200px;position: relative;
+    }
+
+    .menu .inp{
+         height: 35px;width: 170px;padding-right: 30px;
+    }
+
+    .menu .sp{
+        position: absolute;
+        right: 6px;
+        top: 10px;
+        height: 16px;
+        width: 16px;
+        display: inline-block;"
+    }
+
+    .menu .slave-2{
+         display: inline-block;margin-top:10px;float: right;height: 35px;
+    }
+
+    .menu .slave-a{
+         color: red;line-height: 35px;
+    }
+
+    .pg-bottom{
+        width: 980px;
+        margin: 20px auto;
+        background-color: white;
+        text-align: center;
+    }
+
+
